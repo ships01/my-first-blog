@@ -1,0 +1,38 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Про корабли и грузы</title>
+        <link rel="stylesheet" href="/static/blog.css">
+
+    </head>
+    <body>
+    <div class="page-header">
+        <h1><a href="/">Перевозки грузов морем на кораблях</a></h1>
+{% if user.is_authenticated %}
+<p> Вы вошли как: {{user.username}}
+ {% if user.username == "admin" %}
+  (Суперпользователь: можно просматривать и редактировать все заявки)<br>
+ {% endif %}
+ </p>
+<a href="{% url 'post_logout' %}"><button>Выход(+Удалить куки)</button></a><br>
+
+
+ <a href="{% url 'post_list' %}"><button>Список заявок</button></a><br>
+ <a href="{% url 'post_new' %}"><button>Добавить заявку</button></a><br>
+
+{% endif %}
+
+    </div>
+
+    <div class="content container">
+
+        <div class="row">
+            <div class="col-md-8">
+            {% block content %}
+            {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    </body>
+</html>

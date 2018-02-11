@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Вход-логин</title>
+{% if user.is_authenticated %}
+ <p> Вы вошли как: {{user}}</p>
+ <a href="/post"> список заявок</a><br>
+{% endif %}
+  </head>
+  <body>
+    <form action="" method="post">
+      {% csrf_token %}
+      <!-- as_p для того, чтобы каждый элемент формы был с новой строки -->
+      {{ form.as_p }}
+      Проверка капчи для защиты от атак и роботов: <br>
+      <img src="/static/1.png"></img> <input type="text" value="сумма="><br>
+
+      <button type="submit">Войти</button>
+    </form>
+  </body>
+</html>

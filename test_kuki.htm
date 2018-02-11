@@ -1,0 +1,80 @@
+<meta charset=utf8>
+<script>
+//==============kuki============
+function setCookie(name, value, days) {
+ var expires;
+ if (days) {
+  var date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  expires = "; expires=" + date.toGMTString();
+ } 
+ else {expires = "";}
+ document.cookie=encodeURIComponent(name)+"="+encodeURIComponent(value)+expires+"; path=/";
+}
+
+function getCookie(name) {
+ var nameEQ = encodeURIComponent(name) + "=";
+ var ca = document.cookie.split(';');
+ for(var i=0;i<ca.length;i++){
+  var c = ca[i];
+  while (c.charAt(0) === ' ')c = c.substring(1, c.length);
+  if(c.indexOf(nameEQ) === 0)return decodeURIComponent(c.substring(nameEQ.length, c.length));
+ }
+ return '';//null
+}
+
+function delCookie(name) {setCookie(name, "", -1);}
+//============================
+//делит на строки текст не зависимо от ОС win=\r\n mac=\n linux=\r
+function split_str(s){ //\n=10 \r=13
+ var s0=s+'\n';
+ s0=replace_all(s0,'\r\n','\n');
+ s0=replace_all(s0,'\r','\n');
+ s0=replace_all(s0,'\n\n','\n')
+ return s0.split('\n'); //no null.
+}
+
+//кодировщик двоичных данных в %FF коды, любые кодировки сохраняюся!
+//но размер больше в 2-3 раза. Но есть альтернатива - мой собственный формат tr2
+//там размер меньше utf8, но нельзя в тексте обр.кав и только рус буквы А-Я а-я 
+//еще можно без декодера прочитать-90% это обычный транслит, а с декодером 
+//будут гарантированно рус буквы, а не каша, при любой! кодировке в браузере.
+//т.к замена на &#XXXX; символы или юникод, а не UTF8 WIN1251 KOI8 CP866
+//главное чтобы рус шрифты стояли, а если их нету, то надо выкл. декодер.  
+//такие строки безопасно хранить в БД и передавать в SQL запросах.
+//и пройдут без искажений через любые "умные" автоперекодировщики текстов.
+function hex2(d){var h='0123456789ABCDEF',lo=d%16,hi=(d-lo)/16;return ''+h.charAt(hi)+h.charAt(lo);}
+function encode_FF(s) {
+ var i,k,le=s.length,ss='';
+ for(i=0;i<le;i++){ 
+  k=s.charCodeAt(i); //обычный кодер спец. симв не все кодирует. 
+  ss+=(k<128)?'%'+hex2(k):window.encodeURIComponent(s.charAt(i));
+ }
+ return ss;
+}
+//decode_FF('%33%20%21'); все 0-127+ utf8 без проблем.
+function decode_FF(s) {return window.decodeURIComponent(''+s);}
+
+function fireEvent(element,event){
+        var evt = document.createEvent('HTMLEvents');
+        evt.initEvent(event,true,true);
+        element.dispatchEvent(evt);
+}
+
+s=`
+1111
+22ssыы22
+3333
+`;    
+s0=encode_FF(s);s0=''
+for(i=0;i<128;i++)s0=s0+'%'+hex2(i);
+s1=decode_FF(s0)
+s2=encode_FF(s1)
+
+</script>
+
+<button onclick="setCookie('dada','nene',4)">set</button>
+<button onclick="alert(getCookie('dada'))">get</button>
+<button onclick="delCookie('dada')">del</button>
+
+
